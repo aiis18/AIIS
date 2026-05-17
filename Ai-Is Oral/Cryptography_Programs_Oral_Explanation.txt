@@ -1,0 +1,278 @@
+
+# 1. AES Algorithm Oral Explanation
+
+What is AES?
+AES stands for Advanced Encryption Standard.
+It is a symmetric key encryption algorithm used to secure data.
+
+In symmetric encryption:
+- Same key is used for encryption and decryption.
+
+Import Statements
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad, unpad
+
+Explanation
+- AES → Used for AES encryption/decryption
+- get_random_bytes() → Generates secret key
+- pad() → Adds padding to message
+- unpad() → Removes padding after decryption
+
+Generate Key
+key = get_random_bytes(16)
+
+Generates 16-byte (128-bit) AES key.
+
+Create Cipher
+cipher = AES.new(key, AES.MODE_CBC)
+
+Creates AES cipher object using:
+- AES algorithm
+- CBC mode (Cipher Block Chaining)
+
+Plain Text
+plaintext = "Hello AES Encryption"
+
+Original message before encryption.
+
+Encryption
+ciphertext = cipher.encrypt(
+    pad(plaintext.encode(), AES.block_size)
+)
+
+Steps:
+1. Convert string into bytes
+2. Add padding
+3. Encrypt message
+
+Decryption
+decrypted = unpad(
+    cipher_dec.decrypt(ciphertext),
+    AES.block_size
+)
+
+Decrypts encrypted data and removes padding.
+
+Output
+Encrypted Text: 8abf4d2a...
+Decrypted Text: Hello AES Encryption
+
+Viva Questions
+
+Why padding is used?
+AES works on fixed block sizes of 16 bytes.
+
+What is CBC mode?
+Each block depends on previous encrypted block, improving security.
+
+
+# 2. DES Algorithm Oral Explanation
+
+What is DES?
+DES stands for Data Encryption Standard.
+
+It is a symmetric encryption algorithm using:
+- 56-bit key
+- 64-bit data blocks
+
+Import Statements
+from Crypto.Cipher import DES
+from Crypto.Random import get_random_bytes
+
+Used for DES encryption.
+
+Generate Key
+key = get_random_bytes(8)
+
+DES uses 8-byte key.
+
+Create Cipher
+cipher = DES.new(key, DES.MODE_ECB)
+
+Creates DES cipher in ECB mode.
+
+Encryption
+encrypted_bytes = cipher.encrypt(
+    pad(plain_text.encode(), DES.block_size)
+)
+
+Encrypts plaintext into ciphertext.
+
+Decryption
+decrypted_bytes = unpad(
+    cipher.decrypt(base64.b64decode(encrypted_text)),
+    DES.block_size
+)
+
+Decrypts ciphertext back into original text.
+
+16 Rounds in DES
+for i in range(1, 17):
+    print(f"Round {i} using Subkey K{i}")
+
+DES internally performs 16 rounds of processing.
+
+Viva Questions
+
+Difference between AES and DES?
+- AES is more secure
+- DES uses smaller key size
+
+What is ECB mode?
+Each block is encrypted independently.
+
+
+# 3. Transposition Technique Oral Explanation
+
+What is Transposition Cipher?
+It rearranges characters of plaintext to create ciphertext.
+
+Characters remain same but positions change.
+
+Get Column Index Function
+def get_column_index(key, value):
+    return key.index(str(value))
+
+Finds position of column using key.
+
+Encryption Function
+def encrypt(text, key):
+
+Encrypts plaintext using matrix arrangement.
+
+Matrix Creation
+matrix = [['' for _ in range(cols)] for _ in range(rows)]
+
+Creates 2D matrix.
+
+Fill Matrix
+matrix[i][j] = text[index]
+
+Stores plaintext characters row-wise.
+
+Read Column-wise
+cipher_text += matrix[i][col]
+
+Reads matrix column-wise according to key.
+
+Decryption
+Reconstructs original matrix and reads row-wise.
+
+Viva Questions
+
+Is transposition cipher secure?
+No, it is a classical cipher with low security.
+
+Difference between substitution and transposition?
+- Substitution changes characters
+- Transposition changes positions
+
+
+# 4. Hello World AND/XOR Program Oral Explanation
+
+Purpose of Program
+Demonstrates bitwise operations:
+- AND
+- XOR
+
+String Declaration
+text = "Hello World"
+
+Stores text string.
+
+AND Operation
+result = chr(ord(ch) & 127)
+
+Explanation
+- ord(ch) → Converts character to ASCII value
+- & 127 → Performs AND operation
+- chr() → Converts ASCII back to character
+
+XOR Operation
+result = chr(ord(ch) ^ 127)
+
+Performs XOR operation with 127.
+
+Viva Questions
+
+What is bitwise AND?
+Returns 1 only if both bits are 1.
+
+What is XOR?
+Returns 1 when bits are different.
+
+
+# 5. RSA Algorithm Oral Explanation
+
+What is RSA?
+RSA is an asymmetric encryption algorithm.
+
+Uses:
+- Public key for encryption
+- Private key for decryption
+
+Import Statements
+from Crypto.Util.number import getPrime, inverse
+
+Used for RSA mathematical operations.
+
+Generate Prime Numbers
+p = getPrime(512)
+q = getPrime(512)
+
+Generates two large prime numbers.
+
+Calculate n
+n = p * q
+
+Used in both public and private keys.
+
+Calculate Phi
+phi = (p - 1) * (q - 1)
+
+Euler Totient Function.
+
+Public Key
+e = 65537
+
+Common RSA public exponent.
+
+Private Key
+d = inverse(e, phi)
+
+Calculates private key.
+
+Encryption
+ciphertext = pow(plaintext, e, n)
+
+Encrypts message using public key.
+
+Decryption
+decrypted = pow(ciphertext, d, n)
+
+Decrypts message using private key.
+
+Viva Questions
+
+Difference between symmetric and asymmetric encryption?
+- Symmetric uses one key
+- Asymmetric uses two keys
+
+Why RSA is secure?
+Because factoring large prime numbers is difficult.
+
+Short Overall Conclusion
+
+These programs demonstrate:
+- AES encryption
+- DES encryption
+- RSA encryption
+- Transposition cipher
+- Bitwise operations
+
+They help understand:
+- Cryptography concepts
+- Encryption/decryption
+- Secure communication
+- Classical and modern algorithms
