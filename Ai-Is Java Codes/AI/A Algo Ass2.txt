@@ -1,0 +1,347 @@
+A * Algo 
+Python 
+import heapq
+def a_star(graph, heuristic, start, goal):
+    open_list = []
+    heapq.heappush(open_list, (heuristic[start], 0, start))
+    parent = {start: None}
+    g_cost = {node: float('inf') for node in graph}
+    g_cost[start] = 0
+    while open_list:
+        f, current_g, current = heapq.heappop(open_list)
+        if current_g != g_cost[current]:
+            continue
+        print(f"Visiting Node: {current}, g(n)={current_g}, h(n)={heuristic[current]}, f(n)={f}")
+        if current == goal:
+            print("Goal Reached!")
+            return reconstruct_path(parent, goal), g_cost[goal]
+        for neighbor, cost in graph[current]:
+            new_g = current_g + cost
+            if new_g < g_cost[neighbor]:
+                g_cost[neighbor] = new_g
+                parent[neighbor] = current
+                new_f = new_g + heuristic[neighbor]
+                heapq.heappush(open_list, (new_f, new_g, neighbor))
+    return None, None
+def reconstruct_path(parent, goal):
+    path = []
+    while goal is not None:
+        path.append(goal)
+        goal = parent[goal]
+    path.reverse()
+    return path
+graph = {}
+heuristic = {}
+n = int(input("Enter number of nodes: "))
+print("\nEnter node names:")
+nodes = []
+for i in range(n):
+    node = input(f"Node {i+1}: ")
+    nodes.append(node)
+    graph[node] = []
+print("\nEnter edges with cost")
+print("Format: neighbor cost (Example: B 4)")
+for node in nodes:
+    m = int(input(f"\nEnter number of neighbors for {node}: "))
+    for _ in range(m):
+        neighbor, cost = input("Enter neighbor and cost: ").split()
+        graph[node].append((neighbor, int(cost)))
+print("\nEnter heuristic values:")
+for node in nodes:
+    h = int(input(f"h({node}) = "))
+    heuristic[node] = h
+start = input("\nEnter start node: ")
+goal = input("Enter goal node: ")
+path, total_cost = a_star(graph, heuristic, start, goal)
+if path:
+    print("\nOptimal Path:", " -> ".join(path))
+    print("Total Cost:", total_cost)
+else:
+    print("No path found!")
+ Output 
+Enter number of nodes: 5
+
+Enter node names:
+Node 1: S
+Node 2: A
+Node 3: B
+Node 4: C
+Node 5: D
+
+Enter edges with cost
+Format: neighbor cost (Example: B 4)
+
+Enter number of neighbors for S: 2
+Enter neighbor and cost: A 1
+Enter neighbor and cost: B 4
+
+Enter number of neighbors for A: 2
+Enter neighbor and cost: B 2
+Enter neighbor and cost: C 5
+
+Enter number of neighbors for B: 1
+Enter neighbor and cost: C 2
+
+Enter number of neighbors for C: 1
+Enter neighbor and cost: D 3
+
+Enter number of neighbors for D: 0
+
+Enter heuristic values:
+h(S) = 7
+h(A) = 6
+h(B) = 2
+h(C) = 1
+h(D) = 0
+
+Enter start node: S
+Enter goal node: D
+
+Visiting Node: S, g(n)=0, h(n)=7, f(n)=7
+Visiting Node: B, g(n)=4, h(n)=2, f(n)=6
+Visiting Node: A, g(n)=1, h(n)=6, f(n)=7
+Visiting Node: B, g(n)=3, h(n)=2, f(n)=5
+Visiting Node: C, g(n)=5, h(n)=1, f(n)=6
+Visiting Node: D, g(n)=8, h(n)=0, f(n)=8
+
+Goal Reached!
+
+Optimal Path: S -> A -> B -> C -> D
+Total Cost: 8
+
+Java 
+package demo;
+//Assignment No 2
+//A* Search Algorithm
+
+import java.util.*;
+
+class NodeData {
+ String node;
+ int cost;
+
+ NodeData(String node, int cost) {
+     this.node = node;
+     this.cost = cost;
+ }
+}
+
+class State implements Comparable<State> {
+ String node;
+ int g;
+ int f;
+
+ State(String node, int g, int f) {
+     this.node = node;
+     this.g = g;
+     this.f = f;
+ }
+
+ public int compareTo(State other) {
+     return this.f - other.f;
+ }
+}
+
+public class Aalgo{
+
+ static List<String> reconstructPath(Map<String, String> parent, String goal) {
+     List<String> path = new ArrayList<>();
+
+     while (goal != null) {
+         path.add(goal);
+         goal = parent.get(goal);
+     }
+
+     Collections.reverse(path);
+     return path;
+ }
+
+ static void aStar(Map<String, List<NodeData>> graph,
+                   Map<String, Integer> heuristic,
+                   String start,
+                   String goal) {
+
+     PriorityQueue<State> openList = new PriorityQueue<>();
+
+     Map<String, Integer> gCost = new HashMap<>();
+     Map<String, String> parent = new HashMap<>();
+
+     for (String node : graph.keySet()) {
+         gCost.put(node, Integer.MAX_VALUE);
+     }
+
+     gCost.put(start, 0);
+     parent.put(start, null);
+
+     openList.add(new State(start, 0, heuristic.get(start)));
+
+     while (!openList.isEmpty()) {
+
+         State currentState = openList.poll();
+
+         String current = currentState.node;
+         int currentG = currentState.g;
+
+         System.out.println("Visiting Node: " + current +
+                 ", g(n)=" + currentG +
+                 ", h(n)=" + heuristic.get(current) +
+                 ", f(n)=" + currentState.f);
+
+         if (current.equals(goal)) {
+             System.out.println("Goal Reached!");
+
+             List<String> path = reconstructPath(parent, goal);
+
+             System.out.print("Optimal Path: ");
+
+             for (int i = 0; i < path.size(); i++) {
+                 System.out.print(path.get(i));
+
+                 if (i != path.size() - 1) {
+                     System.out.print(" -> ");
+                 }
+             }
+
+             System.out.println("\nTotal Cost: " + gCost.get(goal));
+             return;
+         }
+
+         for (NodeData neighbor : graph.get(current)) {
+
+             int newG = currentG + neighbor.cost;
+
+             if (newG < gCost.get(neighbor.node)) {
+
+                 gCost.put(neighbor.node, newG);
+
+                 parent.put(neighbor.node, current);
+
+                 int newF = newG + heuristic.get(neighbor.node);
+
+                 openList.add(new State(neighbor.node, newG, newF));
+             }
+         }
+     }
+
+     System.out.println("No path found!");
+ }
+
+ public static void main(String[] args) {
+
+     Scanner sc = new Scanner(System.in);
+
+     Map<String, List<NodeData>> graph = new HashMap<>();
+     Map<String, Integer> heuristic = new HashMap<>();
+
+     System.out.print("Enter number of nodes: ");
+     int n = sc.nextInt();
+     sc.nextLine();
+
+     List<String> nodes = new ArrayList<>();
+
+     System.out.println("\nEnter node names:");
+
+     for (int i = 0; i < n; i++) {
+
+         System.out.print("Node " + (i + 1) + ": ");
+         String node = sc.nextLine();
+
+         nodes.add(node);
+
+         graph.put(node, new ArrayList<>());
+     }
+
+     System.out.println("\nEnter edges with cost");
+     System.out.println("Format: neighbor cost (Example: B 4)");
+
+     for (String node : nodes) {
+
+         System.out.print("\nEnter number of neighbors for " + node + ": ");
+         int m = sc.nextInt();
+         sc.nextLine();
+
+         for (int i = 0; i < m; i++) {
+
+             System.out.print("Enter neighbor and cost: ");
+
+             String[] input = sc.nextLine().split(" ");
+
+             String neighbor = input[0];
+             int cost = Integer.parseInt(input[1]);
+
+             graph.get(node).add(new NodeData(neighbor, cost));
+         }
+     }
+
+     System.out.println("\nEnter heuristic values:");
+
+     for (String node : nodes) {
+
+         System.out.print("h(" + node + ") = ");
+         int h = sc.nextInt();
+
+         heuristic.put(node, h);
+     }
+
+     sc.nextLine();
+
+     System.out.print("\nEnter start node: ");
+     String start = sc.nextLine();
+
+     System.out.print("Enter goal node: ");
+     String goal = sc.nextLine();
+
+     aStar(graph, heuristic, start, goal);
+
+     sc.close();
+ }
+}
+
+Output 
+Enter number of nodes: 5
+
+Enter node names:
+Node 1: S
+Node 2: A
+Node 3: B
+Node 4: C
+Node 5: D
+
+Enter edges with cost
+Format: neighbor cost (Example: B 4)
+
+Enter number of neighbors for S: 2
+Enter neighbor and cost: A 1
+Enter neighbor and cost: B 4
+
+Enter number of neighbors for A: 2
+Enter neighbor and cost: B 2
+Enter neighbor and cost: C 5
+
+Enter number of neighbors for B: 1
+Enter neighbor and cost: C 2
+
+Enter number of neighbors for C: 1
+Enter neighbor and cost: D 3
+
+Enter number of neighbors for D: 0
+
+Enter heuristic values:
+h(S) = 7
+h(A) = 6
+h(B) = 2
+h(C) = 1
+h(D) = 0
+
+Enter start node: S
+Enter goal node: D
+Visiting Node: S, g(n)=0, h(n)=7, f(n)=7
+Visiting Node: B, g(n)=4, h(n)=2, f(n)=6
+Visiting Node: A, g(n)=1, h(n)=6, f(n)=7
+Visiting Node: B, g(n)=3, h(n)=2, f(n)=5
+Visiting Node: C, g(n)=5, h(n)=1, f(n)=6
+Visiting Node: C, g(n)=6, h(n)=1, f(n)=7
+Visiting Node: D, g(n)=8, h(n)=0, f(n)=8
+Goal Reached!
+Optimal Path: S -> A -> B -> C -> D
+Total Cost: 8

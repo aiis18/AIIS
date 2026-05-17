@@ -1,0 +1,146 @@
+Python 
+# Assignment No 1
+# DFS and BFS Traversal
+
+def dfs(visited, graph, node):
+    if node not in visited:
+        print(node, end=" ")
+        visited.add(node)
+        for neighbour in graph[node]:
+            dfs(visited, graph, neighbour)
+
+def bfs(visited, graph, node, queue):
+    visited.add(node)
+    queue.append(node)
+
+    while queue:
+        s = queue.pop(0)
+        print(s, end=" ")
+
+        for neighbour in graph[s]:
+            if neighbour not in visited:
+                visited.add(neighbour)
+                queue.append(neighbour)
+
+def main():
+    visited1 = set()   # For DFS
+    visited2 = set()   # For BFS
+    queue = []         # For BFS
+
+    n = int(input("Enter number of nodes : "))
+
+    graph = dict()
+
+    for i in range(1, n + 1):
+        edges = int(input(f"Enter number of edges for node {i} : "))
+        graph[i] = []
+
+        for j in range(1, edges + 1):
+            node = int(input(f"Enter edge {j} for node {i} : "))
+            graph[i].append(node)
+
+    print("\nThe following is DFS")
+    dfs(visited1, graph, 1)
+
+    print("\n\nThe following is BFS")
+    bfs(visited2, graph, 1, queue)
+
+if __name__ == "__main__":
+    main()
+output 
+Enter number of nodes : 4
+Enter number of edges for node 1 : 2
+Enter edge 1 for node 1 : 2
+Enter edge 2 for node 1 : 3
+Enter number of edges for node 2 : 1
+Enter edge 1 for node 2 : 4
+Enter number of edges for node 3 : 1
+Enter edge 1 for node 3 : 4
+Enter number of edges for node 4 : 1
+Enter edge 1 for node 4 : 4
+
+The following is DFS
+1 2 4 3 
+
+The following is BFS
+1 2 3 4
+
+Java 
+// Assignment No 1
+// DFS and BFS Traversal
+package demo;
+import java.util.*;
+
+public class bfsfdfs {
+
+    // DFS Function
+    static void dfs(Set<Integer> visited, Map<Integer, ArrayList<Integer>> graph, int node) {
+        if (!visited.contains(node)) {
+            System.out.print(node + " ");
+            visited.add(node);
+
+            for (int neighbour : graph.get(node)) {
+                dfs(visited, graph, neighbour);
+            }
+        }
+    }
+
+    // BFS Function
+    static void bfs(Set<Integer> visited, Map<Integer, ArrayList<Integer>> graph, int node) {
+
+        Queue<Integer> queue = new LinkedList<>();
+
+        visited.add(node);
+        queue.add(node);
+
+        while (!queue.isEmpty()) {
+            int s = queue.poll();
+
+            System.out.print(s + " ");
+
+            for (int neighbour : graph.get(s)) {
+                if (!visited.contains(neighbour)) {
+                    visited.add(neighbour);
+                    queue.add(neighbour);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        Set<Integer> visited1 = new HashSet<>();
+        Set<Integer> visited2 = new HashSet<>();
+
+        Map<Integer, ArrayList<Integer>> graph = new HashMap<>();
+
+        System.out.print("Enter number of nodes : ");
+        int n = sc.nextInt();
+
+        for (int i = 1; i <= n; i++) {
+
+            System.out.print("Enter number of edges for node " + i + " : ");
+            int edges = sc.nextInt();
+
+            graph.put(i, new ArrayList<>());
+
+            for (int j = 1; j <= edges; j++) {
+
+                System.out.print("Enter edge " + j + " for node " + i + " : ");
+                int node = sc.nextInt();
+
+                graph.get(i).add(node);
+            }
+        }
+
+        System.out.println("\nThe following is DFS");
+        dfs(visited1, graph, 1);
+
+        System.out.println("\n\nThe following is BFS");
+        bfs(visited2, graph, 1);
+
+        sc.close();
+    }
+}

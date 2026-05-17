@@ -1,0 +1,75 @@
+AES Algo
+package demo;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import java.util.Base64;
+
+public class AES {
+
+    public static void main(String[] args) throws Exception {
+
+        // Generate AES Key
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        keyGen.init(128);
+        SecretKey secretKey = keyGen.generateKey();
+
+        // Create IV
+        byte[] iv = new byte[16];
+        IvParameterSpec ivSpec = new IvParameterSpec(iv);
+
+        // Plain Text
+        String plainText = "Hello AES Encryption";
+
+        // Encrypt
+        Cipher encryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec);
+
+        byte[] encryptedBytes = encryptCipher.doFinal(plainText.getBytes());
+
+        String encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
+
+        System.out.println("Encrypted Text: " + encryptedText);
+
+        // Decrypt
+        Cipher decryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        decryptCipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
+
+        byte[] decryptedBytes = decryptCipher.doFinal(encryptedBytes);
+
+        String decryptedText = new String(decryptedBytes);
+
+        System.out.println("Decrypted Text: " + decryptedText);
+    }
+}
+
+Output
+Encrypted Text: GmxbBskmv27bmNb5Hr1mLqsWVjypB6cCDTtiCsbvjL0=
+Decrypted Text: Hello AES Encryption
+
+Python 
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad, unpad
+
+# Generate 16-byte Key (AES-128)
+key = get_random_bytes(16)
+
+# Create AES object
+cipher = AES.new(key, AES.MODE_CBC)
+
+# Plaintext
+plaintext = "Hello AES Encryption"
+
+# Encrypt
+ciphertext = cipher.encrypt(pad(plaintext.encode(), AES.block_size))
+
+print("Encrypted (Hex):", ciphertext.hex())
+
+# Decrypt
+cipher_dec = AES.new(key, AES.MODE_CBC, cipher.iv)
+
+decrypted = unpad(cipher_dec.decrypt(ciphertext), AES.block_size)
+
+print("Decrypted Text:", decrypted.decode())

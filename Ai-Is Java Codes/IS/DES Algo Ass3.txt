@@ -1,0 +1,99 @@
+DES ALGO
+package demo;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.util.Base64;
+public class DES {
+    public static void main(String[] args) throws Exception {
+        String plainText = "HelloDESAlgorithm";
+        
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
+        keyGenerator.init(56);
+        SecretKey secretKey = keyGenerator.generateKey();
+
+         Cipher cipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
+
+        System.out.println("==============================================");
+        System.out.println("        DATA ENCRYPTION STANDARD (DES)       ");
+        System.out.println("==============================================");
+        byte[] plainBytes = plainText.getBytes();
+        System.out.println("\n[64-bit Plaintext]");
+        System.out.println(plainText);
+        System.out.println("\n--> Initial Permutation Applied");
+        System.out.println("\nLeft Plain Text (32-bit)");
+        System.out.println("(Simulated Left Half)");
+        System.out.println("\nRight Plain Text (32-bit)");
+        System.out.println("(Simulated Right Half)");
+
+        System.out.println("\n--- 16 Rounds Processing ---");
+        for (int i = 1; i <= 16; i++) {
+            System.out.println("Round " + i + " using Subkey K" + i);
+        }
+        System.out.println("\n--> Final Permutation Applied");
+     
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        byte[] encryptedBytes = cipher.doFinal(plainBytes);
+        String encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
+
+        System.out.println("\n[64-bit Ciphertext]");
+        System.out.println(encryptedText);
+
+        System.out.println("\n==============================================");
+        System.out.println("Decryption Process");
+        System.out.println("==============================================");
+
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
+        String decryptedText = new String(decryptedBytes);
+
+        System.out.println("\nRecovered Plaintext:");
+        System.out.println(decryptedText);
+    }
+}
+
+Output-
+==============================================
+        DATA ENCRYPTION STANDARD (DES)       
+==============================================
+
+[64-bit Plaintext]
+HelloDESAlgorithm
+
+--> Initial Permutation Applied
+
+Left Plain Text (32-bit)
+(Simulated Left Half)
+
+Right Plain Text (32-bit)
+(Simulated Right Half)
+
+--- 16 Rounds Processing ---
+Round 1 using Subkey K1
+Round 2 using Subkey K2
+Round 3 using Subkey K3
+Round 4 using Subkey K4
+Round 5 using Subkey K5
+Round 6 using Subkey K6
+Round 7 using Subkey K7
+Round 8 using Subkey K8
+Round 9 using Subkey K9
+Round 10 using Subkey K10
+Round 11 using Subkey K11
+Round 12 using Subkey K12
+Round 13 using Subkey K13
+Round 14 using Subkey K14
+Round 15 using Subkey K15
+Round 16 using Subkey K16
+
+--> Final Permutation Applied
+
+[64-bit Ciphertext]
+zj3ppCSWohEjWRR+bfcEeVRgVfEM80Ku
+
+==============================================
+Decryption Process
+==============================================
+
+Recovered Plaintext:
+HelloDESAlgorithm

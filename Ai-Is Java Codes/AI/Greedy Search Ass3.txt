@@ -1,0 +1,321 @@
+Greedy Search 
+Python 
+
+import heapq
+
+def greedy_best_first_search(graph, heuristic, start, goal):
+
+    open_list = []
+
+    heapq.heappush(open_list, (heuristic[start], start))
+
+    visited = set()
+
+    parent = {}
+
+    while open_list:
+
+        h_value, current = heapq.heappop(open_list)
+
+        print(f"Visiting Node: {current} with h({current}) = {h_value}")
+
+        if current == goal:
+
+            print("Goal Reached!")
+
+            return reconstruct_path(parent, start, goal)
+
+        visited.add(current)
+
+        for neighbor in graph[current]:
+
+            if neighbor not in visited:
+
+                parent[neighbor] = current
+
+                heapq.heappush(open_list, (heuristic[neighbor], neighbor))
+
+    return None
+
+def reconstruct_path(parent, start, goal):
+
+    path = [goal]
+
+    while goal in parent:
+
+        goal = parent[goal]
+
+        path.append(goal)
+
+    path.reverse()
+
+    return path
+
+graph = {}
+
+heuristic = {}
+
+n = int(input("Enter number of nodes: "))
+
+print("\nEnter node names:")
+
+nodes = []
+
+for i in range(n):
+
+    node = input(f"Node {i+1}: ")
+
+    nodes.append(node)
+
+    graph[node] = []
+
+print("\nEnter neighbors for each node (space separated):")
+
+for node in nodes:
+
+    neighbors = input(f"Neighbors of {node}: ").split()
+
+    graph[node] = neighbors
+
+print("\nEnter heuristic values:")
+
+for node in nodes:
+
+    h = int(input(f"h({node}) = "))
+
+    heuristic[node] = h
+
+start = input("\nEnter start node: ")
+
+goal = input("Enter goal node: ")
+
+path = greedy_best_first_search(graph, heuristic, start, goal)
+
+if path:
+
+    print("\nFinal Path:", " -> ".join(path))
+
+else:
+
+    print("No path found!")
+
+Output 
+Enter number of nodes: 8
+
+Enter node names:
+Node 1: A
+Node 2: B
+Node 3: C
+Node 4: D
+Node 5: E
+Node 6: F
+Node 7: H
+Node 8: G
+
+Enter neighbors for each node (space separated):
+Neighbors of A: B C D
+Neighbors of B: E
+Neighbors of C: F
+Neighbors of D: F
+Neighbors of E: H
+Neighbors of F: G
+Neighbors of H: G
+Neighbors of G: 
+
+Enter heuristic values:
+h(A) = 40
+h(B) = 32
+h(C) = 25
+h(D) = 35
+h(E) = 19
+h(F) = 17
+h(H) = 10
+h(G) = 0
+
+Enter start node: A
+Enter goal node: G
+Visiting Node: A with h(A) = 40
+Visiting Node: C with h(C) = 25
+Visiting Node: F with h(F) = 17
+Visiting Node: G with h(G) = 0
+Goal Reached!
+
+Final Path: A -> C -> F -> G
+
+Java 
+package demo;
+//Assignment 3
+//Greedy Best First Search
+
+import java.util.*;
+
+class Node implements Comparable<Node> {
+
+ String name;
+ int heuristic;
+
+ Node(String name, int heuristic) {
+     this.name = name;
+     this.heuristic = heuristic;
+ }
+
+ public int compareTo(Node other) {
+     return this.heuristic - other.heuristic;
+ }
+}
+
+public class GreedyBestFirstSearch {
+
+ static List<String> reconstructPath(Map<String, String> parent,
+                                     String start,
+                                     String goal) {
+
+     List<String> path = new ArrayList<>();
+
+     path.add(goal);
+
+     while (parent.containsKey(goal)) {
+
+         goal = parent.get(goal);
+
+         path.add(goal);
+     }
+
+     Collections.reverse(path);
+
+     return path;
+ }
+
+ static List<String> greedyBestFirstSearch(
+         Map<String, List<String>> graph,
+         Map<String, Integer> heuristic,
+         String start,
+         String goal) {
+
+     PriorityQueue<Node> openList = new PriorityQueue<>();
+
+     Set<String> visited = new HashSet<>();
+
+     Map<String, String> parent = new HashMap<>();
+
+     openList.add(new Node(start, heuristic.get(start)));
+
+     while (!openList.isEmpty()) {
+
+         Node currentNode = openList.poll();
+
+         String current = currentNode.name;
+
+         System.out.println("Visiting Node: " + current +
+                 " with h(" + current + ") = " +
+                 currentNode.heuristic);
+
+         if (current.equals(goal)) {
+
+             System.out.println("Goal Reached!");
+
+             return reconstructPath(parent, start, goal);
+         }
+
+         visited.add(current);
+
+         for (String neighbor : graph.get(current)) {
+
+             if (!visited.contains(neighbor)) {
+
+                 parent.put(neighbor, current);
+
+                 openList.add(new Node(neighbor,
+                         heuristic.get(neighbor)));
+             }
+         }
+     }
+
+     return null;
+ }
+
+ public static void main(String[] args) {
+
+     Scanner sc = new Scanner(System.in);
+
+     Map<String, List<String>> graph = new HashMap<>();
+
+     Map<String, Integer> heuristic = new HashMap<>();
+
+     System.out.print("Enter number of nodes: ");
+
+     int n = sc.nextInt();
+     sc.nextLine();
+
+     List<String> nodes = new ArrayList<>();
+
+     System.out.println("\nEnter node names:");
+
+     for (int i = 0; i < n; i++) {
+
+         System.out.print("Node " + (i + 1) + ": ");
+
+         String node = sc.nextLine();
+
+         nodes.add(node);
+
+         graph.put(node, new ArrayList<>());
+     }
+
+     System.out.println("\nEnter neighbors for each node (space separated):");
+
+     for (String node : nodes) {
+
+         System.out.print("Neighbors of " + node + ": ");
+
+         String input = sc.nextLine();
+
+         if (!input.isEmpty()) {
+
+             String[] neighbors = input.split(" ");
+
+             graph.put(node, Arrays.asList(neighbors));
+         }
+     }
+
+     System.out.println("\nEnter heuristic values:");
+
+     for (String node : nodes) {
+
+         System.out.print("h(" + node + ") = ");
+
+         int h = sc.nextInt();
+
+         heuristic.put(node, h);
+     }
+
+     sc.nextLine();
+
+     System.out.print("\nEnter start node: ");
+
+     String start = sc.nextLine();
+
+     System.out.print("Enter goal node: ");
+
+     String goal = sc.nextLine();
+
+     List<String> path = greedyBestFirstSearch(
+             graph,
+             heuristic,
+             start,
+             goal
+     );
+
+     if (path != null) {
+
+         System.out.println("\nFinal Path: " +
+                 String.join(" -> ", path));
+     }
+     else {
+
+         System.out.println("No path found!");
+     }
+
+     sc.close();
+ }
+}
