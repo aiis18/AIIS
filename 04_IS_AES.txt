@@ -1,0 +1,39 @@
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad, unpad
+import base64
+
+# Generate AES Key (128-bit)
+key = get_random_bytes(16)
+
+# Create IV (16 bytes)
+iv = bytes(16)
+
+# Plain Text
+plain_text = "Hello AES Encryption"
+
+# Create AES Cipher for Encryption
+encrypt_cipher = AES.new(key, AES.MODE_CBC, iv)
+
+# Encrypt
+encrypted_bytes = encrypt_cipher.encrypt(
+    pad(plain_text.encode(), AES.block_size)
+)
+
+# Convert to Base64
+encrypted_text = base64.b64encode(encrypted_bytes).decode()
+
+print("Encrypted Text:", encrypted_text)
+
+# Create AES Cipher for Decryption
+decrypt_cipher = AES.new(key, AES.MODE_CBC, iv)
+
+# Decrypt
+decrypted_bytes = unpad(
+    decrypt_cipher.decrypt(encrypted_bytes),
+    AES.block_size
+)
+
+decrypted_text = decrypted_bytes.decode()
+
+print("Decrypted Text:", decrypted_text)

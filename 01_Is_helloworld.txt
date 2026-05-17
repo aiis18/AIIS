@@ -1,0 +1,18 @@
+# Original String
+text = "Hello World"
+
+print("Result of AND with 127:")
+
+# AND Operation
+for ch in text:
+    result = chr(ord(ch) & 127)
+    print(result, end="")
+
+print("\n")
+
+print("Result of XOR with 127:")
+
+# XOR Operation
+for ch in text:
+    result = chr(ord(ch) ^ 127)
+    print(result, end="")

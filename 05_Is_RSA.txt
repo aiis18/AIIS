@@ -1,0 +1,48 @@
+from Crypto.Util.number import getPrime, inverse
+
+# Generate two large prime numbers
+p = getPrime(512)
+q = getPrime(512)
+
+# Compute n and phi
+n = p * q
+phi = (p - 1) * (q - 1)
+
+# Public exponent
+e = 65537
+
+# Private exponent
+d = inverse(e, phi)
+
+# Encryption function
+def encrypt(message, e, n):
+    message_int = int.from_bytes(
+        message.encode(),
+        byteorder='big'
+    )
+    return pow(message_int, e, n)
+
+# Decryption function
+def decrypt(ciphertext, d, n):
+    decrypted_int = pow(ciphertext, d, n)
+
+    decrypted_bytes = decrypted_int.to_bytes(
+        (decrypted_int.bit_length() + 7) // 8,
+        byteorder='big'
+    )
+
+    return decrypted_bytes.decode()
+
+# Original message
+message = "Hello world"
+
+# Encrypt
+ciphertext = encrypt(message, e, n)
+
+# Decrypt
+decrypted_message = decrypt(ciphertext, d, n)
+
+# Output
+print("Original Message:", message)
+print("Encrypted Message:", ciphertext)
+print("Decrypted Message:", decrypted_message)

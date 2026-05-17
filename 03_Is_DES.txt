@@ -1,0 +1,60 @@
+from Crypto.Cipher import DES
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad, unpad
+import base64
+
+# Plain text
+plain_text = "HelloDESAlgorithm"
+
+# Generate 56-bit DES key (8 bytes)
+key = get_random_bytes(8)
+
+# Create DES cipher
+cipher = DES.new(key, DES.MODE_ECB)
+
+print("==============================================")
+print("        DATA ENCRYPTION STANDARD (DES)       ")
+print("==============================================")
+
+# Convert plaintext to bytes
+plain_bytes = plain_text.encode()
+
+print("\n[64-bit Plaintext]")
+print(plain_text)
+
+print("\n--> Initial Permutation Applied")
+
+print("\nLeft Plain Text (32-bit)")
+print("(Simulated Left Half)")
+
+print("\nRight Plain Text (32-bit)")
+print("(Simulated Right Half)")
+
+print("\n--- 16 Rounds Processing ---")
+for i in range(1, 17):
+    print(f"Round {i} using Subkey K{i}")
+
+print("\n--> Final Permutation Applied")
+
+# Encrypt
+encrypted_bytes = cipher.encrypt(pad(plain_bytes, DES.block_size))
+encrypted_text = base64.b64encode(encrypted_bytes).decode()
+
+print("\n[64-bit Ciphertext]")
+print(encrypted_text)
+
+print("\n==============================================")
+print("Decryption Process")
+print("==============================================")
+
+# Decrypt
+decrypt_cipher = DES.new(key, DES.MODE_ECB)
+decrypted_bytes = unpad(
+    decrypt_cipher.decrypt(base64.b64decode(encrypted_text)),
+    DES.block_size
+)
+
+decrypted_text = decrypted_bytes.decode()
+
+print("\nRecovered Plaintext:")
+print(decrypted_text)
